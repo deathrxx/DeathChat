@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DeathChat — Enter anonymously. Leave no traces.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">💀</span>
+        <div class="brand-text">
+          <span class="brand-name">DEATHCHAT</span>
+          <span class="brand-tagline">EPHEMERAL PROTOCOL</span>
+        </div>
+      </div>
+      <div class="header-identity" id="headerIdentity">
+        <span class="avatar-badge" id="headerAvatar">👻</span>
+        <span class="identity-name" id="headerName">Anonymous</span>
+        <button id="btnEditIdentity" class="btn-icon" title="Customize Identity">⚙️</button>
+      </div>
+    </header>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="app-main">
+      <!-- SCREEN 1: ONBOARDING / IDENTITY SETUP -->
+      <section id="screenOnboarding" class="screen active">
+        <div class="onboarding-card glass-panel">
+          <div class="cyber-logo">💀</div>
+          <h1 class="glow-title">DEATHCHAT</h1>
+          <p class="tagline">"Enter anonymously. Talk freely. Leave no unnecessary traces."</p>
+
+          <div class="identity-customizer">
+            <label class="input-label">YOUR EPHEMERAL AVATAR</label>
+            <div class="avatar-selector" id="avatarGrid">
+              <!-- Rendered via JS -->
+            </div>
+
+            <label class="input-label" for="inputDisplayName">CODENAME / DISPLAY NAME</label>
+            <div class="input-group">
+              <input type="text" id="inputDisplayName" maxlength="32" placeholder="e.g. PhantomReaper_404" autocomplete="off" />
+              <button id="btnRerollName" class="btn-secondary" title="Roll random codename">🎲 Reroll</button>
+            </div>
+            <p class="privacy-note">🛡️ No email or phone required. Sessions vanish automatically.</p>
+          </div>
+
+          <button id="btnEnterApp" class="btn-neon-primary full-width">ENTER THE VOID</button>
+        </div>
+      </section>
+
+      <!-- SCREEN 2: HOME DASHBOARD -->
+      <section id="screenHome" class="screen">
+        <div class="dashboard-grid">
+          <!-- Action Cards -->
+          <div class="action-card glass-panel" id="cardCreateRoom">
+            <div class="card-icon">⚡</div>
+            <h3>CREATE ROOM</h3>
+            <p>Spawn an ephemeral room with custom retention (30m, 1h, 2h) & auto 24h deletion.</p>
+            <button class="btn-neon-primary btn-sm" id="btnOpenCreateModal">Spawn Room</button>
+          </div>
+
+          <div class="action-card glass-panel" id="cardJoinRoom">
+            <div class="card-icon">🔑</div>
+            <h3>JOIN VIA CODE</h3>
+            <p>Enter an invite code or room ID to immediately drop into a conversation.</p>
+            <button class="btn-neon-secondary btn-sm" id="btnOpenJoinModal">Join by Code</button>
+          </div>
+        </div>
+
+        <!-- Public Rooms Section -->
+        <div class="public-rooms-container glass-panel">
+          <div class="section-header">
+            <div>
+              <h2>ACTIVE PUBLIC ROOMS</h2>
+              <p class="subtext">Browse active conversations open to all anonymous participants</p>
+            </div>
+            <div class="section-actions">
+              <input type="text" id="searchPublicRooms" placeholder="Search rooms..." class="search-input" />
+              <button id="btnRefreshRooms" class="btn-icon" title="Refresh">🔄</button>
+            </div>
+          </div>
+
+          <div id="roomsList" class="rooms-list">
+            <!-- Dynamic room cards -->
+          </div>
+          <div id="roomsEmptyState" class="empty-state" style="display: none;">
+            <span class="empty-icon">📡</span>
+            <p>No active public rooms right now. Be the first to create one!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 3: REAL-TIME CHAT -->
+      <section id="screenChat" class="screen">
+        <div class="chat-container glass-panel">
+          <!-- Room Header -->
+          <div class="chat-header">
+            <div class="chat-info">
+              <button id="btnLeaveRoom" class="btn-icon" title="Leave Room">⬅</button>
+              <div class="room-title-block">
+                <div class="room-title-row">
+                  <span id="chatRoomPrivacyBadge" class="badge">PUBLIC</span>
+                  <h2 id="chatRoomName">Room Name</h2>
+                </div>
+                <div class="room-meta-row">
+                  <span id="chatRoomCodeBadge" class="code-badge">DC-XXXX</span>
+                  <span id="chatExpiresCountdown" class="countdown-badge">⏳ 24h</span>
+                  <span id="chatRetentionBadge" class="retention-badge">⏱️ 1h retention</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-controls">
+              <button id="btnToggleParticipants" class="btn-secondary btn-sm">
+                👥 <span id="participantCountBadge">1</span>
+              </button>
+              <button id="btnShareInvite" class="btn-secondary btn-sm" title="Copy Invite Link">🔗 Invite</button>
+              <button id="btnRoomSettings" class="btn-icon" title="Room Options" style="display: none;">⚙️</button>
+            </div>
+          </div>
+
+          <!-- Connection Status Banner -->
+          <div id="connectionBanner" class="connection-banner connected">
+            ● Connected to Real-time Ephemeral Network
+          </div>
+
+          <div class="chat-layout">
+            <!-- Messages Stream -->
+            <div class="messages-area">
+              <div id="messagesList" class="messages-list">
+                <!-- Messages dynamic -->
+              </div>
+
+              <!-- Typing Indicator -->
+              <div id="typingIndicator" class="typing-indicator" style="display: none;">
+                <span class="dots"><span></span><span></span><span></span></span>
+                <span id="typingText">Someone is typing...</span>
+              </div>
+
+              <!-- Input Area -->
+              <div class="chat-input-bar">
+                <input type="text" id="chatMessageInput" placeholder="Send an ephemeral message..." maxlength="1000" autocomplete="off" />
+                <button id="btnSendMessage" class="btn-neon-primary">SEND</button>
+              </div>
+            </div>
+
+            <!-- Participants Sidebar / Drawer -->
+            <aside id="participantsDrawer" class="participants-sidebar">
+              <div class="sidebar-header">
+                <h3>PARTICIPANTS (<span id="sideParticipantCount">1</span>)</h3>
+                <button id="btnCloseSidebar" class="btn-icon">✖</button>
+              </div>
+              <ul id="participantsList" class="participants-list">
+                <!-- Dynamic participants -->
+              </ul>
+
+              <!-- Owner Controls Panel -->
+              <div id="ownerControlsSection" class="owner-panel" style="display: none;">
+                <h4>⚡ ROOM OWNER CONTROLS</h4>
+                <div class="owner-actions">
+                  <button id="btnCloseRoom" class="btn-warning btn-sm full-width">🔒 Close to New Users</button>
+                  <button id="btnDeleteRoom" class="btn-danger btn-sm full-width">🗑️ Destroy Room</button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- CREATE ROOM MODAL -->
+    <div id="modalCreateRoom" class="modal-backdrop">
+      <div class="modal-box glass-panel">
+        <div class="modal-header">
+          <h3>SPAWN A NEW ROOM</h3>
+          <button class="btn-icon btn-close-modal" data-modal="modalCreateRoom">✖</button>
+        </div>
+        <form id="formCreateRoom">
+          <label class="input-label" for="inputRoomName">ROOM NAME</label>
+          <input type="text" id="inputRoomName" required minlength="2" maxlength="50" placeholder="e.g. Underground Syndicate" />
+
+          <label class="input-label" for="inputRoomDesc">DESCRIPTION (OPTIONAL)</label>
+          <input type="text" id="inputRoomDesc" maxlength="200" placeholder="Brief context for the room" />
+
+          <label class="input-label">VISIBILITY</label>
+          <div class="radio-cards">
+            <label class="radio-card">
+              <input type="radio" name="roomVisibility" value="public" checked />
+              <div class="radio-card-content">
+                <span class="card-title">🌐 Public</span>
+                <span class="card-desc">Visible on the public dashboard</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="roomVisibility" value="private" />
+              <div class="radio-card-content">
+                <span class="card-title">🔒 Private</span>
+                <span class="card-desc">Requires password or direct invitation</span>
+              </div>
+            </label>
+          </div>
+
+          <div id="privatePasswordGroup" style="display: none; margin-top: 10px;">
+            <label class="input-label" for="inputRoomPassword">ROOM PASSWORD</label>
+            <input type="password" id="inputRoomPassword" minlength="4" placeholder="Minimum 4 characters" />
+          </div>
+
+          <label class="input-label" style="margin-top: 15px;">MESSAGE RETENTION POLICY</label>
+          <div class="radio-pills">
+            <label class="pill-label">
+              <input type="radio" name="retentionPolicy" value="1800" />
+              <span>30 Minutes</span>
+            </label>
+            <label class="pill-label">
+              <input type="radio" name="retentionPolicy" value="3600" checked />
+              <span>1 Hour</span>
+            </label>
+            <label class="pill-label">
+              <input type="radio" name="retentionPolicy" value="7200" />
+              <span>2 Hours</span>
+            </label>
+          </div>
+          <p class="helper-text">⚠️ Room itself will automatically self-destruct after 24 hours.</p>
+
+          <button type="submit" class="btn-neon-primary full-width" style="margin-top: 15px;">LAUNCH ROOM</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- JOIN ROOM MODAL -->
+    <div id="modalJoinRoom" class="modal-backdrop">
+      <div class="modal-box glass-panel">
+        <div class="modal-header">
+          <h3>JOIN EPHEMERAL ROOM</h3>
+          <button class="btn-icon btn-close-modal" data-modal="modalJoinRoom">✖</button>
+        </div>
+        <form id="formJoinRoom">
+          <label class="input-label" for="inputJoinCode">ROOM CODE OR INVITE LINK</label>
+          <input type="text" id="inputJoinCode" required placeholder="e.g. DC7X9K or full URL" />
+
+          <div id="joinPasswordGroup" style="display: none; margin-top: 10px;">
+            <label class="input-label" for="inputJoinPassword">PASSWORD REQUIRED</label>
+            <input type="password" id="inputJoinPassword" placeholder="Enter room password" />
+          </div>
+
+          <div id="joinErrorMsg" class="error-msg" style="display: none;"></div>
+
+          <button type="submit" class="btn-neon-secondary full-width" style="margin-top: 15px;">CONNECT TO ROOM</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- REPORT USER MODAL -->
+    <div id="modalReportUser" class="modal-backdrop">
+      <div class="modal-box glass-panel">
+        <div class="modal-header">
+          <h3>REPORT PARTICIPANT</h3>
+          <button class="btn-icon btn-close-modal" data-modal="modalReportUser">✖</button>
+        </div>
+        <form id="formReportUser">
+          <p class="subtext">Reporting: <strong id="reportTargetName"></strong></p>
+          <input type="hidden" id="reportTargetSessionId" />
+          <label class="input-label" for="reportReason">REASON FOR REPORT</label>
+          <textarea id="reportReason" required rows="3" placeholder="Explain the abusive or harassing behavior..."></textarea>
+          <button type="submit" class="btn-danger full-width" style="margin-top: 12px;">SUBMIT REPORT</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <!-- Socket.IO Client -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

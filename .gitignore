@@ -1,0 +1,35 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.env
+.env.local
+.env.*.local
+
+# Android / Gradle
+.gradle/
+build/
+*/build/
+*.iml
+.idea/
+local.properties
+.DS_Store
+*.apk
+*.aab
+*.ap_
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Keystores & Secrets
+*.jks
+*.keystore
+signing-info.properties
+google-services.json
+
+# Temporary files & logs
+*.log
+scratch/
+tmp/
